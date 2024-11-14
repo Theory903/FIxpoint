@@ -1,0 +1,50 @@
+// Top-level build.gradle file
+
+// Configure buildscript for the entire project
+buildscript {
+    ext.kotlin_version = '1.9.10'  // Define Kotlin version here
+
+    repositories {
+        google()
+        mavenCentral()
+        maven {
+            url 'https://storage.googleapis.com/download.flutter.io'
+            content {
+                includeGroup 'io.flutter'
+            }
+        }
+    }
+
+    dependencies {
+        classpath 'com.android.tools.build:gradle:8.2.0'
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+    }
+}
+
+// Define plugins using the plugins DSL
+plugins {
+    id 'com.android.application' version '8.2.0' apply false
+    id 'org.jetbrains.kotlin.android' version '1.9.10' apply false
+}
+
+// Configure all projects (including root project)
+allprojects {
+    repositories {
+        google()
+        mavenCentral()
+    }
+}
+
+// Set the build directory for the root project
+rootProject.buildDir = '../build'
+
+// Configure all subprojects
+subprojects {
+    project.buildDir = "${rootProject.buildDir}/${project.name}"
+    project.evaluationDependsOn(':app')
+}
+
+// Register clean task using the tasks.register API
+tasks.register('clean', Delete) {
+    delete rootProject.buildDir
+}
