@@ -1,3 +1,4 @@
+// landing_screen.dart
 import 'package:fixpoint/core/app_export.dart';
 import 'package:flutter/material.dart';
 import '../../theme/custom_button_style.dart';
@@ -10,36 +11,41 @@ class LandingScreen extends StatelessWidget {
 
   static Widget builder(BuildContext context) {
     return BlocProvider<LandingBloc>(
-      create: (context) => LandingBloc(
-        LandingState(landingModelObj: LandingModel()),
-      )..add(LandingInitialEvent()),
+      create: (context) => LandingBloc()..add(LandingInitialEvent()),  // Initialize without parameters
       child: const LandingScreen(),
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<LandingBloc, LandingState>(
-      builder: (context, state) {
-        return SafeArea(
-          child: Scaffold(
-            backgroundColor: appTheme.gray10002,
-            body: SingleChildScrollView(
-              child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: 12.h),
-                child: Column(
-                  children: [
-                    SizedBox(height: 50.h),
-                    _buildImageSection(),
-                    SizedBox(height: 62.h),
-                    _buildExperienceSection(context),
-                  ],
+    return BlocListener<LandingBloc, LandingState>(
+      listener: (context, state) {
+        if (state is LandingNavigationState) {
+          Navigator.pushNamed(context, state.destination);
+        }
+      },
+      child: BlocBuilder<LandingBloc, LandingState>(
+        builder: (context, state) {
+          return SafeArea(
+            child: Scaffold(
+              backgroundColor: appTheme.gray10002,
+              body: SingleChildScrollView(
+                child: Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 12.h),
+                  child: Column(
+                    children: [
+                      SizedBox(height: 50.h),
+                      _buildImageSection(),
+                      SizedBox(height: 62.h),
+                      _buildExperienceSection(context),
+                    ],
+                  ),
                 ),
               ),
             ),
-          ),
-        );
-      },
+          );
+        },
+      ),
     );
   }
 
@@ -99,6 +105,6 @@ class LandingScreen extends StatelessWidget {
 
   /// Navigates to the login choice screen.
   void _onTapGetStarted(BuildContext context) {
-    NavigatorService.pushNamed(AppRoutes.loginChoiceScreen);
+    context.read<LandingBloc>().add(LandingNavigateToLoginChoiceEvent());
   }
 }

@@ -1,6 +1,6 @@
-// import 'package:fixpoint/presentation/app_navigation_screen/app_navigation_screen.dart';
-import 'package:fixpoint/presentation/ownerdashboard_page/ownerdashboard_page.dart';
+import 'package:fixpoint/presentation/landing_screen/models/landing_model.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import '../screens.dart';
 
 class AppRoutes {
@@ -43,18 +43,18 @@ class AppRoutes {
   static const String initialRoute = '/landing_screen';
 
   static String sidemenuScreen = '/sidemenu_screen';
-
   static String outletScreen = '/outlet_screen';
-
   static String workassignScreen = '/workassign_screen';
-
   static String ownerbillpaymentScreen = '/owner_bill_payment_screen';
-
   static String ownerwishlistScreen = '/owner_wishlist_screen';
 
   // Map of routes to their respective builders
   static Map<String, WidgetBuilder> get routes => {
-        landingScreen: (context) => const LandingScreen(),
+        landingScreen: (context) => BlocProvider(
+              create: (context) => LandingBloc() // No need to pass LandingState directly
+                ..add(LandingInitialEvent()),
+              child: const LandingScreen(),
+            ),
         loginChoiceScreen: (context) => const LoginchoiceScreen(),
         loginPageScreen: (context) => LoginpageScreen(),
         employeeDashboardPage: (context) => const EmployeeDashboardPage(),
@@ -67,13 +67,11 @@ class AppRoutes {
         managementScreen: (context) => ManagementScreen(),
         employeeRankScreen: (context) => const EmployeeRankScreen(),
         overallReportScreen: (context) => const OverallReportScreen(),
-        // assignScreen: (context) => AssignScreen(),
         scheduleScreen: (context) => const ScheduleScreen(),
         payScreen: (context) => const PayScreen(),
         washingScreen: (context) => const WashingScreen(),
         transactionScreen: (context) => const TransactionScreen(),
         chatAssistantSendDocumentScreen: (context) =>
             const ChatAsistantSendDocumentScreen(),
-        // appNavigationScreen: (context) => const AppNavigationScreen(),
       };
 }

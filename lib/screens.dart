@@ -24,3 +24,5 @@ export 'presentation/sidemenu_screen/sidemenu_screen.dart';
 export 'presentation/transaction_screen/transaction_screen.dart';
 export 'presentation/washing_screen/washing_screen.dart';
 export 'presentation/workassign_screen/work_assign_screen.dart';
+export 'presentation/landing_screen/bloc/landing_bloc.dart';
+export 'presentation/ownerdashboard_page/ownerdashboard_page.dart';

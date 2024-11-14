@@ -3,24 +3,28 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
-var globalMessengerKey = GlobalKey<ScaffoldMessengerState>();
+final GlobalKey<ScaffoldMessengerState> globalMessengerKey = GlobalKey<ScaffoldMessengerState>();
 
-void main() {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  Future.wait([
-    SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp])
-  ]).then((value) {
-    PrefUtils().init();
-    runApp(MyApp());
-  });
+  
+  // Set preferred orientations
+  await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+  
+  // Initialize shared preferences
+  await PrefUtils().init();
+  
+  // Run the main app
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ScreenUtilInit(
-      designSize: const Size(375, 812), // Adjust based on your design
+      designSize: const Size(375, 812),
       minTextAdapt: true,
       splitScreenMode: true,
       builder: (context, child) {
@@ -33,8 +37,30 @@ class MyApp extends StatelessWidget {
           child: BlocBuilder<ThemeBloc, ThemeState>(
             builder: (context, state) {
               return MaterialApp(
-                theme: theme,
                 title: 'fixpoint',
+                theme: theme,
+                debugShowCheckedModeBanner: false,
+                
+                // Global scaffold messenger for showing snackbars, etc.
+                scaffoldMessengerKey: globalMessengerKey,
+                
+                // Localizations for internationalization support
+                localizationsDelegates: const [
+                  AppLocalizationDelegate(),
+                  GlobalMaterialLocalizations.delegate,
+                  GlobalWidgetsLocalizations.delegate,
+                  GlobalCupertinoLocalizations.delegate,
+                ],
+                supportedLocales: const [
+                  Locale('en', ''),  // Additional locales can be added here
+                ],
+                
+                // Define navigation
+                navigatorKey: NavigatorService.navigatorKey,
+                initialRoute: AppRoutes.initialRoute,
+                routes: AppRoutes.routes,
+                
+                // Text scaling and media query adjustments
                 builder: (context, child) {
                   return MediaQuery(
                     data: MediaQuery.of(context).copyWith(
@@ -43,22 +69,6 @@ class MyApp extends StatelessWidget {
                     child: child!,
                   );
                 },
-                navigatorKey: NavigatorService.navigatorKey,
-                debugShowCheckedModeBanner: false,
-                localizationsDelegates: [
-                  AppLocalizationDelegate(),
-                  GlobalMaterialLocalizations.delegate,
-                  GlobalWidgetsLocalizations.delegate,
-                  GlobalCupertinoLocalizations.delegate
-                ],
-                supportedLocales: [
-                  Locale(
-                    'en',
-                    '',
-                  )
-                ],
-                initialRoute: AppRoutes.initialRoute,
-                routes: AppRoutes.routes,
               );
             },
           ),
