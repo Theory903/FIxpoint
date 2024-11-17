@@ -16,12 +16,11 @@ class OverallReportScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final ThemeData theme = Theme.of(context); // Initialize theme
-    final customAppTheme = appTheme; // Initialize appTheme if you have one
+    final ThemeData theme = Theme.of(context); // Initialize theme // Initialize appTheme if you have one
 
     return SafeArea(
       child: Scaffold(
-        backgroundColor: customAppTheme.gray10002,
+        backgroundColor: appTheme.gray10002,
         appBar: _buildAppBar(context, theme),
         body: SizedBox(
           width: double.maxFinite,
@@ -47,7 +46,7 @@ class OverallReportScreen extends StatelessWidget {
                       ],
                     ),
                   ),
-                  _buildOverviewSection(context, theme, customAppTheme)
+                  _buildOverviewSection(context, theme, appTheme)
                 ],
               ),
             ),

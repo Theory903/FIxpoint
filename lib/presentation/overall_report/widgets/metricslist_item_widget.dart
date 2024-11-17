@@ -32,11 +32,11 @@ class MetricslistItemWidget extends StatelessWidget {
       ),
       child: Row(
         children: [
-          Image.asset(
-            metricslistItemModelObj.layerFourOne,
-            height: 40.h,
-            width: 40.h,
-          ),
+          // Image.asset(
+          //   metricslistItemModelObj.layerFourOne,
+          //   height: 40.h,
+          //   width: 40.h,
+          // ),
           SizedBox(width: 12.h),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -59,12 +59,7 @@ class MetricslistItemWidget extends StatelessWidget {
               ),
             ],
           ),
-          Spacer(),
-          Image.asset(
-            metricslistItemModelObj.frameOne,
-            height: 24.h,
-            width: 24.h,
-          ),
+          Spacer()
         ],
       ),
     );

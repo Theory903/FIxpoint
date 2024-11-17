@@ -20,16 +20,12 @@ class OverallReportController extends GetxController {
     overallReportModelObj.update((model) {
       model?.metricslistItemList = [
         MetricslistItemModel(
-          layerFourOne: 'assets/images/layerFourOne.png',
           totalRevenue: 'Total Revenue',
           kValue: '\$100k',
-          frameOne: 'assets/images/frameOne.png',
         ),
         MetricslistItemModel(
-          layerFourOne: 'assets/images/layerFourTwo.png',
           totalRevenue: 'Total Orders',
           kValue: '200k',
-          frameOne: 'assets/images/frameTwo.png',
         ),
         // Add more items as needed
       ];
