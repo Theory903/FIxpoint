@@ -1,74 +1,154 @@
 import 'package:flutter/material.dart';
-import '../../core/app_export.dart';
-import '../../core/utils/validation_functions.dart';
-import '../../domain/facebookauth/facebook_auth_helper.dart';
-import '../../theme/custom_button_style.dart';
-import '../../widgets/app_bar/appbar_leading_iconbutton.dart';
-import '../../presentation/ownerdashboard_page/ownerdashboard_page.dart';
-import '../../widgets/app_bar/appbar_subtitle_one.dart';
-import '../../widgets/app_bar/custom_app_bar.dart';
-import '../../widgets/custom_elevated_button.dart';
-import '../../widgets/custom_icon_button.dart';
-import '../../widgets/custom_text_form_field.dart';
-import 'bloc/loginpage_bloc.dart';
-import 'models/loginpage_model.dart';
+import 'package:get/get.dart';
+import 'package:fixpoint/presentation/loginpage_screen/controllers/login_controller.dart';
+import 'package:fixpoint/theme/custom_button_style.dart'; // Customize your button styles here
+import 'package:fixpoint/widgets/custom_elevated_button.dart'; // Reuse your custom elevated button
+import 'package:fixpoint/widgets/custom_icon_button.dart'; // Reuse your custom icon button
+import 'package:fixpoint/widgets/custom_text_form_field.dart'; // Reuse your custom text form field
+import 'package:fixpoint/widgets/custom_text_form_field.dart'; // Ensure this import is correct
+import 'package:fixpoint/widgets/app_bar/custom_app_bar.dart'; // Reuse your custom app bar widgets
+import 'package:fixpoint/widgets/app_bar/appbar_leading_iconbutton.dart'; // Reuse your app bar leading icon button
 
-// ignore_for_file: must_be_immutable
 class LoginpageScreen extends StatelessWidget {
-  LoginpageScreen({Key? key}) : super(key: key);
-
-  GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-
-  static Widget builder(BuildContext context) {
-    return BlocProvider<LoginpageBloc>(
-      create: (context) => LoginpageBloc(LoginpageState(
-        loginpageModelObj: LoginpageModel(),
-      ))
-        ..add(LoginpageInitialEvent()),
-      child: LoginpageScreen(),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        backgroundColor: appTheme.gray200,
-        resizeToAvoidBottomInset: false,
-        appBar: _buildAppBar(context),
-        body: Form(
-          key: _formKey,
-          child: SizedBox(
-            width: double.maxFinite,
-            child: SingleChildScrollView(
-              child: Container(
-                width: double.maxFinite,
-                padding: EdgeInsets.only(
-                  left: 18.h,
-                  top: 40.h,
-                  right: 18.h,
+    final LoginController controller = Get.find<LoginController>(); // GetX controller
+
+    return Scaffold(
+      appBar: AppBar(
+        leadingWidth: 64.0,
+        leading: AppbarLeadingIconbutton(
+          imagePath: 'assets/icons/back_arrow.png', // Customize as needed
+          onTap: () => Navigator.pop(context),
+        ),
+        centerTitle: true,
+        title: Text(
+          "Login",
+          style: TextStyle(color: Colors.green[800]),
+        ),
+        backgroundColor: Colors.white,
+        elevation: 0,
+      ),
+      body: SafeArea(
+        child: Padding(
+          padding: EdgeInsets.symmetric(horizontal: 18.0),
+          child: Form(
+            key: controller.formKey,
+            child: ListView(
+              children: [
+                // Header Section
+                _buildHeader(),
+
+                SizedBox(height: 30.0),
+
+                // Email TextField
+                CustomTextFormField(
+                  controller: controller.emailController,
+                  labelText: 'Email',
+                  hintText: 'Enter your email',
+                  keyboardType: TextInputType.emailAddress,
+                  prefix: Icon(Icons.email, color: Colors.green),
+                  suffixIcon: IconButton(
+                    icon: Icon(Icons.clear, color: Colors.grey),
+                    onPressed: () {
+                      controller.emailController.clear();
+                    },
+                  ), // Add a suffixIcon parameter
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter an email';
+                    }
+                    return null;
+                  },
                 ),
-                child: Column(
+                SizedBox(height: 14.0),
+
+                // Password TextField
+                Obx(() {
+                  return CustomTextFormField(
+                    controller: controller.passwordController,
+                    labelText: 'Password',
+                    hintText: 'Enter your password',
+                    keyboardType: TextInputType.text,
+                    obscureText: !controller.isPasswordVisible.value,
+                    prefix: Icon(Icons.lock, color: Colors.green),
+                    suffixIcon: IconButton(
+                      icon: Icon(
+                        controller.isPasswordVisible.value
+                            ? Icons.visibility
+                            : Icons.visibility_off,
+                        color: Colors.grey,
+                      ),
+                      onPressed: controller.togglePasswordVisibility,
+                    ),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter a password';
+                      }
+                      return null;
+                    },
+                  );
+                }),
+
+                SizedBox(height: 10.0),
+
+                // Forgot Password Button
+                _buildForgotPasswordButton(),
+
+                SizedBox(height: 42.0),
+
+                // Login Button
+                Obx(() {
+                  return ElevatedButton(
+                    onPressed: controller.isLoading.value ? null : controller.login,
+                    child: controller.isLoading.value
+                        ? CircularProgressIndicator(color: Colors.white)
+                        : Text("Log In"),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.green[700],
+                      foregroundColor: Colors.white,
+                      minimumSize: Size(double.infinity, 48.0),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10.0),
+                      ),
+                    ),
+                  );
+                }),
+
+                SizedBox(height: 20.0),
+
+                // Divider with Text in the middle
+                Row(
                   children: [
-                    _buildSignInHeader(context),
-                    SizedBox(height: 30.h),
-                    Padding(
-                      padding: EdgeInsets.only(right: 4.h),
-                      child: _buildEmailField(context),
+                    Expanded(
+                      child: Divider(
+                        color: Colors.grey[400],
+                        thickness: 1,
+                      ),
                     ),
-                    SizedBox(height: 14.h),
                     Padding(
-                      padding: EdgeInsets.only(right: 4.h),
-                      child: _buildPasswordField(context),
+                      padding: EdgeInsets.symmetric(horizontal: 8.0),
+                      child: Text("OR", style: TextStyle(color: Colors.grey)),
                     ),
-                    SizedBox(height: 10.h),
-                    _buildForgotPasswordRow(context),
-                    SizedBox(height: 42.h),
-                    _buildSignInForm(context),
-                    SizedBox(height: 16.h),
+                    Expanded(
+                      child: Divider(
+                        color: Colors.grey[400],
+                        thickness: 1,
+                      ),
+                    ),
                   ],
                 ),
-              ),
+
+                SizedBox(height: 20.0),
+
+                // Social Media Buttons
+                _buildSocialMediaButtons(controller),
+
+                SizedBox(height: 30.0),
+
+                // Contact Text
+                _buildContactText(),
+              ],
             ),
           ),
         ),
@@ -76,304 +156,111 @@ class LoginpageScreen extends StatelessWidget {
     );
   }
 
-  /// Section Widget
-  PreferredSizeWidget _buildAppBar(BuildContext context) {
-    return CustomAppBar(
-      leadingWidth: 64.h,
-      leading: AppbarLeadingIconbutton(
-        imagePath: ImageConstant.imgArrowLeftBlack900,
-        margin: EdgeInsets.only(
-          left: 24.h,
-          top: 8.h,
-          bottom: 8.h,
+  // Header Section
+  Widget _buildHeader() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          "Let's Sign In",
+          style: TextStyle(
+            fontSize: 32,
+            fontWeight: FontWeight.bold,
+            color: Colors.green[800],
+          ),
         ),
-        onTap: () {
-          onTapArrowleftone(context);
+        SizedBox(height: 10.0),
+        Text(
+          "Take your business to the next level",
+          style: TextStyle(fontSize: 16, color: Colors.grey[600]),
+        ),
+      ],
+    );
+  }
+
+  // Forgot Password Button
+  Widget _buildForgotPasswordButton() {
+    return Align(
+      alignment: Alignment.centerRight,
+      child: TextButton(
+        onPressed: () {
+          // Implement forgot password functionality
         },
-      ),
-      centerTitle: true,
-      title: AppbarSubtitleOne(
-        text: "lbl_owner".tr,
-      ),
-    );
-  }
-
-  /// Section Widget
-  Widget _buildSignInHeader(BuildContext context) {
-    return Container(
-      width: double.maxFinite,
-      margin: EdgeInsets.only(
-        left: 6.h,
-        right: 4.h,
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          RichText(
-            text: TextSpan(
-              children: [
-                TextSpan(
-                  text: "lbl_let_s".tr,
-                  style: CustomTextStyles.headlineMediumMedium,
-                ),
-                TextSpan(
-                  text: " ",
-                ),
-                TextSpan(
-                  text: "lbl_sign_in".tr,
-                  style: CustomTextStyles.headlineMediumOnSecondaryContainer,
-                ),
-                TextSpan(
-                  text: "     ",
-                )
-              ],
-            ),
-            textAlign: TextAlign.left,
-          ),
-          SizedBox(height: 20.h),
-          Text(
-            "msg_take_your_business".tr,
-            style: CustomTextStyles.bodyMediumLatoBluegray600,
-          )
-        ],
+        child: Text(
+          "Forgot Password?",
+          style: TextStyle(color: Colors.green[700]),
+        ),
       ),
     );
   }
 
-  /// Section Widget
-  Widget _buildForgotPasswordRow(BuildContext context) {
-    return Container(
-      width: double.maxFinite,
-      margin: EdgeInsets.only(right: 4.h),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(
-            "msg_forgot_password".tr,
-            style: CustomTextStyles.labelLargeRalewayBlack900,
-          ),
-          Text(
-            "lbl_show_password".tr,
-            style: CustomTextStyles.labelLargeRalewayBlack900,
-          )
-        ],
-      ),
-    );
-  }
-
-  /// Section Widget
-  Widget _buildSignInForm(BuildContext context) {
-    return Container(
-      width: double.maxFinite,
-      margin: EdgeInsets.only(
-        left: 8.h,
-        right: 12.h,
-      ),
-      child: Column(
-        children: [
-          SizedBox(
-            width: double.maxFinite,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                Expanded(
-                  child: Padding(
-                    padding: EdgeInsets.only(bottom: 4.h),
-                    child: Divider(
-                      color: appTheme.gray500,
-                    ),
-                  ),
-                ),
-                SizedBox(width: 8.h),
-                Align(
-                  alignment: Alignment.center,
-                  child: Text(
-                    "lbl_or_sign_up_with".tr,
-                    style: CustomTextStyles.labelSmallRalewayGray500,
-                  ),
-                ),
-                SizedBox(width: 8.h),
-                Expanded(
-                  child: Padding(
-                    padding: EdgeInsets.only(bottom: 4.h),
-                    child: Divider(
-                      color: appTheme.gray500,
-                    ),
-                  ),
-                )
-              ],
-            ),
-          ),
-          SizedBox(height: 24.h),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              CustomIconButton(
-                height: 54.h,
-                width: 98.h,
-                padding: EdgeInsets.all(14.h),
-                decoration: IconButtonStyleHelper.outlineGrayTL10,
-                child: CustomImageView(
-                  imagePath: ImageConstant.imgLogInAccount,
-                ),
-              ),
-              SizedBox(width: 10.h),
-              CustomIconButton(
-                height: 54.h,
-                width: 98.h,
-                padding: EdgeInsets.all(14.h),
-                decoration: IconButtonStyleHelper.outlineGrayTL10,
-                onTap: () {
-                  onTapBtnFacebookone(context);
-                },
-                child: CustomImageView(
-                  imagePath: ImageConstant.imgFacebook,
-                ),
-              ),
-              SizedBox(width: 10.h),
-              CustomIconButton(
-                height: 54.h,
-                width: 98.h,
-                padding: EdgeInsets.all(14.h),
-                decoration: IconButtonStyleHelper.outlineGrayTL10,
-                child: CustomImageView(
-                  imagePath: ImageConstant.imgFavorite,
-                ),
-              )
-            ],
-          ),
-          SizedBox(height: 98.h),
-          CustomElevatedButton(
-            text: "lbl_log_in".tr,
-            buttonStyle: CustomButtonStyles.outlineBlueGray,
-            onPressed: () {
-              // Get email and password values
-              final email =
-                  context.read<LoginpageBloc>().state.emailController?.text;
-              final password =
-                  context.read<LoginpageBloc>().state.passwordController?.text;
-
-              // Check if email and password match "admin"
-              if (email == 'admin' && password == 'admin') {
-                // Successful login action, e.g., navigate to home screen
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text("Login successful! Welcome, Admin.")),
-                );
-                NavigatorService.navigateTo(
-                    OwnerdashboardPage()); // Adjust to your home screen
-              } else {
-                // Show error message if credentials are incorrect
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text("Invalid email or password")),
-                );
-              }
-            },
-          ),
-          SizedBox(height: 26.h),
-          RichText(
-            text: TextSpan(
-              children: [
-                TextSpan(
-                  text: "msg_don_t_have_an_account2".tr,
-                  style: CustomTextStyles.bodyMediumTeal900,
-                ),
-                TextSpan(
-                  text: "lbl_contact".tr,
-                  style: CustomTextStyles.titleSmallOnSecondaryContainer_1,
-                )
-              ],
-            ),
-            textAlign: TextAlign.left,
-          )
-        ],
-      ),
-    );
-  }
-
-  /// Section Action
-  onTapArrowleftone(BuildContext context) {
-    NavigatorService.goBack();
-  }
-
-  /// Section Action
-  onTapBtnFacebookone(BuildContext context) async {
-    await FacebookAuthHelper().facebookSignInProcess().then((facebookUser) {
-      onSuccessfulLogin(context);
-    }).catchError((error) {
-      onLoginError(context);
-    });
-  }
-
-  /// Method to execute after login is successful
-  void onSuccessfulLogin(BuildContext context) {
-    NavigatorService.navigateTo(OwnerdashboardPage());
-  }
-
-  /// Method to execute if login error occurs
-  void onLoginError(BuildContext context) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text("Failed to login with Facebook.")),
-    );
-  }
-
-  /// Email TextField Widget
-  Widget _buildEmailField(BuildContext context) {
-    return BlocSelector<LoginpageBloc, LoginpageState, TextEditingController?>(
-      selector: (state) => state.emailController,
-      builder: (context, emailController) {
-        return CustomTextFormField(
-          controller: emailController,
-          labelText: "Email",  // Required 'labelText'
-          hintText: "Enter your email", // Optional
-          keyboardType: TextInputType.emailAddress,  // Required 'keyboardType'
-          prefix: _buildPrefixIcon(imagePath: ImageConstant.imgLock),
-          validator: (value) {
-            if (value == null || !isValidEmail(value)) {
-              return "Please enter a valid email";
-            }
-            return null;
+  // Social Media Buttons
+  Widget _buildSocialMediaButtons(LoginController controller) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        _socialMediaButton(
+          icon: Icons.g_translate,
+          label: "Google",
+          color: Colors.red,
+          onTap: () {
+            // Implement Google Sign-In
           },
-          suffixIcon: IconButton(
-            icon: Icon(Icons.email),
-            onPressed: () {},
-          ), // Required 'suffixIcon'
-        );
-      },
-    );
-  }
-
-  /// Password TextField Widget
-  Widget _buildPasswordField(BuildContext context) {
-    return BlocSelector<LoginpageBloc, LoginpageState, TextEditingController?>(
-      selector: (state) => state.passwordController,
-      builder: (context, passwordController) {
-        return CustomTextFormField(
-          controller: passwordController,
-          labelText: "Password",  // Required 'labelText'
-          hintText: "Enter your password", // Optional
-          keyboardType: TextInputType.text,  // Required 'keyboardType'
-          obscureText: true,
-          prefix: _buildPrefixIcon(imagePath: ImageConstant.imgLocation),
-          validator: (value) {
-            if (value == null || !isValidPassword(value)) {
-              return "Please enter a valid password";
-            }
-            return null;
+        ),
+        SizedBox(width: 10.0),
+        _socialMediaButton(
+          icon: Icons.facebook,
+          label: "Facebook",
+          color: Colors.blue[800]!,
+          onTap: controller.signInWithFacebook,
+        ),
+        SizedBox(width: 10.0),
+        _socialMediaButton(
+          icon: Icons.apple,
+          label: "Apple",
+          color: Colors.black,
+          onTap: () {
+            // Implement Apple Sign-In
           },
-          suffixIcon: IconButton(
-            icon: Icon(Icons.visibility_off),
-            onPressed: () {},
-          ), // Required 'suffixIcon'
-        );
-      },
+        ),
+      ],
     );
   }
 
-  Widget _buildPrefixIcon({required String imagePath}) {
-    return CustomImageView(
-      imagePath: imagePath,
+  Widget _socialMediaButton({
+    required IconData icon,
+    required String label,
+    required Color color,
+    required VoidCallback onTap,
+  }) {
+    return Expanded(
+      child: ElevatedButton.icon(
+        onPressed: onTap,
+        icon: Icon(icon, color: Colors.white),
+        label: Text(label, style: TextStyle(color: Colors.white)),
+        style: ElevatedButton.styleFrom(
+          backgroundColor: color,
+          minimumSize: Size(double.infinity, 50.0),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(8.0),
+          ),
+        ),
+      ),
+    );
+  }
+
+  // Contact Text
+  Widget _buildContactText() {
+    return Center(
+      child: TextButton(
+        onPressed: () {
+          // Implement contact us functionality
+        },
+        child: Text(
+          "Don't have an account? Contact Us",
+          style: TextStyle(color: Colors.green[700]),
+        ),
+      ),
     );
   }
 }

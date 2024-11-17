@@ -1,5 +1,6 @@
 import 'package:fixpoint/core/app_export.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import '../../../theme/custom_button_style.dart';
 import '../../../widgets/custom_elevated_button.dart';
 import '../models/notifcation_one_item_model.dart';

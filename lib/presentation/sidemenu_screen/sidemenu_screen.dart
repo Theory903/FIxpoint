@@ -1,26 +1,21 @@
 import 'package:fixpoint/core/app_export.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import '../../theme/custom_button_style.dart';
 import '../../widgets/custom_elevated_button.dart';
 import '../../widgets/custom_icon_button.dart';
 import '../../widgets/custom_switch.dart';
-import 'bloc/sidemenu_bloc.dart';
-import 'models/sidemenu_model.dart';
+import 'controllers/sidemenu_controller.dart';
 
 class SidemenuScreen extends StatelessWidget {
-  const SidemenuScreen({Key? key}) : super(key: key);
+  final SidemenuController controller = Get.put(SidemenuController());
 
-  static Widget builder(BuildContext context) {
-    return BlocProvider<SidemenuBloc>(
-      create: (context) => SidemenuBloc(SidemenuState(
-        sidemenuModelObj: SidemenuModel(),
-      ))..add(SidemenuInitialEvent()),
-      child: SidemenuScreen(),
-    );
-  }
+  SidemenuScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return SafeArea(
       child: Scaffold(
         backgroundColor: theme.colorScheme.onErrorContainer,
@@ -54,27 +49,28 @@ class SidemenuScreen extends StatelessWidget {
                     context,
                     icon: ImageConstant.imgMdiBellNotificationOutline,
                     label: "lbl_notification".tr,
-                    onTap: () => onTapNotificationSection(context),
+                    onTap: () => onTapNotificationSection(),
                   ),
                   const SizedBox(height: 34.0),
                   _buildMenuSection(
                     context,
                     icon: ImageConstant.imgWallet,
                     label: "lbl_bill_payment".tr,
-                    onTap: () => onTapBillPaymentSection(context),
+                    onTap: () => onTapBillPaymentSection(),
                   ),
                   const SizedBox(height: 34.0),
                   _buildMenuSection(
                     context,
                     icon: ImageConstant.imgHeart,
                     label: "lbl_wishlist".tr,
-                    onTap: () => onTapWishlist(context),
+                    onTap: () => onTapWishlist(),
                   ),
                   const SizedBox(height: 22.0),
                   _buildMenuSection(
                     context,
                     icon: ImageConstant.imgIconParkOutlineSettingTwo,
                     label: "lbl_settings".tr,
+                    onTap: () => onTapSettings(),
                   ),
                   const SizedBox(height: 188.0),
                   _buildLogoutSection(context),
@@ -109,11 +105,11 @@ class SidemenuScreen extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    "lbl_washing_bay".tr,
+                    controller.sidemenuModelObj.value.profileName.tr,
                     style: CustomTextStyles.titleMediumRobotoBlack900,
                   ),
                   Text(
-                    "lbl_bhopal_mp".tr,
+                    controller.sidemenuModelObj.value.location.tr,
                     style: CustomTextStyles.bodyMediumRobotoGray70003,
                   )
                 ],
@@ -124,7 +120,7 @@ class SidemenuScreen extends StatelessWidget {
           CustomElevatedButton(
             height: 32.0,
             width: 62.0,
-            text: "lbl_1_outlet".tr,
+            text: controller.sidemenuModelObj.value.outletInfo.tr,
             margin: const EdgeInsets.only(bottom: 4.0),
             buttonStyle: CustomButtonStyles.fillGray,
             buttonTextStyle: CustomTextStyles.labelMediumGray50004,
@@ -135,6 +131,8 @@ class SidemenuScreen extends StatelessWidget {
   }
 
   Widget _buildDarkModeSection(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
@@ -149,20 +147,19 @@ class SidemenuScreen extends StatelessWidget {
           style: theme.textTheme.bodyMedium,
         ),
         Spacer(),
-        BlocSelector<SidemenuBloc, SidemenuState, bool?>(
-          selector: (state) => state.isSelectedSwitch,
-          builder: (context, isSelectedSwitch) {
-            return CustomSwitch(
-              value: isSelectedSwitch,
-              onChange: (value) => context.read<SidemenuBloc>().add(ChangeSwitchEvent(value: value)),
-            );
-          },
-        ),
+        Obx(() {
+          return CustomSwitch(
+            value: controller.isDarkMode.value,
+            onChange: (value) => controller.toggleDarkMode(value),
+          );
+        }),
       ],
     );
   }
 
   Widget _buildMenuSection(BuildContext context, {required String icon, required String label, Function()? onTap}) {
+    final theme = Theme.of(context);
+
     return GestureDetector(
       onTap: onTap,
       child: Row(
@@ -186,7 +183,7 @@ class SidemenuScreen extends StatelessWidget {
 
   Widget _buildLogoutSection(BuildContext context) {
     return GestureDetector(
-      onTap: () => onTapLogoutSection(context),
+      onTap: () => onTapLogoutSection(),
       child: Row(
         children: [
           CustomImageView(
@@ -204,8 +201,9 @@ class SidemenuScreen extends StatelessWidget {
     );
   }
 
-  void onTapNotificationSection(BuildContext context) => NavigatorService.pushNamed(AppRoutes.ownerNotificationScreen);
-  void onTapBillPaymentSection(BuildContext context) => NavigatorService.pushNamed(AppRoutes.ownerbillpaymentScreen);
-  void onTapWishlist(BuildContext context) => NavigatorService.pushNamed(AppRoutes.ownerwishlistScreen);
-  void onTapLogoutSection(BuildContext context) => NavigatorService.pushNamed(AppRoutes.loginChoiceScreen);
+  void onTapNotificationSection() => Get.toNamed(AppRoutes.OwnerNotificationScreen);
+  void onTapBillPaymentSection() => Get.toNamed(AppRoutes.ownerbillpaymentScreen);
+  void onTapWishlist() => Get.toNamed(AppRoutes.ownerwishlistScreen);
+  void onTapSettings() => Get.toNamed(AppRoutes.generalSettingScreen); // Adjust if necessary
+  void onTapLogoutSection() => Get.offAllNamed(AppRoutes.loginChoiceScreen);
 }

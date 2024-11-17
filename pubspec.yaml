@@ -8,6 +8,8 @@ dependencies:
     sdk: flutter
   flutter_localizations: 
     sdk: flutter
+  provider: ^6.1.2
+  get: ^4.6.6
   cached_network_image: ^3.3.1
   flutter_svg: ^2.0.10+1
   flutter_login_facebook: ^2.0.1

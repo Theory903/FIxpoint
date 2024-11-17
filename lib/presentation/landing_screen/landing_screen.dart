@@ -1,55 +1,38 @@
-// landing_screen.dart
 import 'package:fixpoint/core/app_export.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import '../../theme/custom_button_style.dart';
 import '../../widgets/custom_elevated_button.dart';
-import 'bloc/landing_bloc.dart';
-import 'models/landing_model.dart';
+import 'controller/landing_controller.dart'; // Import the controller
 
 class LandingScreen extends StatelessWidget {
   const LandingScreen({Key? key}) : super(key: key);
 
-  static Widget builder(BuildContext context) {
-    return BlocProvider<LandingBloc>(
-      create: (context) => LandingBloc()..add(LandingInitialEvent()),  // Initialize without parameters
-      child: const LandingScreen(),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
-    return BlocListener<LandingBloc, LandingState>(
-      listener: (context, state) {
-        if (state is LandingNavigationState) {
-          Navigator.pushNamed(context, state.destination);
-        }
-      },
-      child: BlocBuilder<LandingBloc, LandingState>(
-        builder: (context, state) {
-          return SafeArea(
-            child: Scaffold(
-              backgroundColor: appTheme.gray10002,
-              body: SingleChildScrollView(
-                child: Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 12.h),
-                  child: Column(
-                    children: [
-                      SizedBox(height: 50.h),
-                      _buildImageSection(),
-                      SizedBox(height: 62.h),
-                      _buildExperienceSection(context),
-                    ],
-                  ),
-                ),
-              ),
+    final LandingController controller = Get.put(LandingController()); // Automatically bind the controller
+
+    return SafeArea(
+      child: Scaffold(
+        backgroundColor: appTheme.gray10002,
+        body: SingleChildScrollView(
+          child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: 12.h),
+            child: Column(
+              children: [
+                SizedBox(height: 50.h),
+                _buildImageSection(),
+                SizedBox(height: 62.h),
+                _buildExperienceSection(controller),
+              ],
             ),
-          );
-        },
+          ),
+        ),
       ),
     );
   }
 
-  /// Builds the image section at the top of the screen.
+  // Builds the image section at the top of the screen.
   Widget _buildImageSection() {
     return CustomImageView(
       imagePath: ImageConstant.imgFreeShippingPana,
@@ -59,8 +42,8 @@ class LandingScreen extends StatelessWidget {
     );
   }
 
-  /// Builds the experience text and button section.
-  Widget _buildExperienceSection(BuildContext context) {
+  // Builds the experience text and button section.
+  Widget _buildExperienceSection(LandingController controller) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -97,14 +80,9 @@ class LandingScreen extends StatelessWidget {
           text: "lbl_get_started".tr,
           margin: EdgeInsets.symmetric(horizontal: 62.h),
           buttonStyle: CustomButtonStyles.outlineBlueGray,
-          onPressed: () => _onTapGetStarted(context),
+          onPressed: controller.navigateToLoginChoice, // Call navigate method from controller
         ),
       ],
     );
-  }
-
-  /// Navigates to the login choice screen.
-  void _onTapGetStarted(BuildContext context) {
-    context.read<LandingBloc>().add(LandingNavigateToLoginChoiceEvent());
   }
 }

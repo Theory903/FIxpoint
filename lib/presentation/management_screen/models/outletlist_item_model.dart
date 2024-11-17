@@ -1,26 +1,29 @@
 import 'package:equatable/equatable.dart';
+import 'package:get/get.dart';
 import 'package:fixpoint/core/utils/image_constant.dart';
 
 /// This class is used in the [outletlist_item_widget] screen.
-
-// ignore_for_file: must_be_immutable
+// ignore: must_be_immutable
 class OutletlistItemModel extends Equatable {
-  OutletlistItemModel(
-      {this.peopleCounter, this.outletoneOne, this.outletoneThree, this.id}) {
-    peopleCounter = peopleCounter ?? "10 people";
-    outletoneOne = outletoneOne ?? ImageConstant.imgIcRoundStarOutline;
-    outletoneThree = outletoneThree ?? ImageConstant.imgGroup16;
-    id = id ?? "";
+  // Make fields reactive using Rx
+  Rx<String> peopleCounter = Rx<String>("10 people");
+  Rx<String> outletoneOne = Rx<String>(ImageConstant.imgIcRoundStarOutline);
+  Rx<String> outletoneThree = Rx<String>(ImageConstant.imgGroup16);
+  Rx<String> id = Rx<String>("");
+
+  OutletlistItemModel({
+    String? peopleCounter,
+    String? outletoneOne,
+    String? outletoneThree,
+    String? id,
+  }) {
+    this.peopleCounter.value = peopleCounter ?? "10 people";
+    this.outletoneOne.value = outletoneOne ?? ImageConstant.imgIcRoundStarOutline;
+    this.outletoneThree.value = outletoneThree ?? ImageConstant.imgGroup16;
+    this.id.value = id ?? "";
   }
 
-  String? peopleCounter;
-
-  String? outletoneOne;
-
-  String? outletoneThree;
-
-  String? id;
-
+  // Create a copyWith method for updating values
   OutletlistItemModel copyWith({
     String? peopleCounter,
     String? outletoneOne,
@@ -28,13 +31,13 @@ class OutletlistItemModel extends Equatable {
     String? id,
   }) {
     return OutletlistItemModel(
-      peopleCounter: peopleCounter ?? this.peopleCounter,
-      outletoneOne: outletoneOne ?? this.outletoneOne,
-      outletoneThree: outletoneThree ?? this.outletoneThree,
-      id: id ?? this.id,
+      peopleCounter: peopleCounter ?? this.peopleCounter.value,
+      outletoneOne: outletoneOne ?? this.outletoneOne.value,
+      outletoneThree: outletoneThree ?? this.outletoneThree.value,
+      id: id ?? this.id.value,
     );
   }
 
   @override
-  List<Object?> get props => [peopleCounter, outletoneOne, outletoneThree, id];
+  List<Object?> get props => [peopleCounter.value, outletoneOne.value, outletoneThree.value, id.value];
 }

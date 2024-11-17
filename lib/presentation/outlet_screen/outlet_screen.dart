@@ -3,6 +3,7 @@ import 'package:fixpoint/presentation/outlet_screen/scrollview_tab1_page.dart';
 import 'package:fixpoint/widgets/app_bar/appbar_leading_iconbutton.dart';
 import 'package:fixpoint/widgets/app_bar/custom_app_bar.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 import 'bloc/outlet_bloc.dart';
 import 'models/outlet_model.dart';

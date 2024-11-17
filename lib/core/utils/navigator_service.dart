@@ -1,4 +1,3 @@
-import 'package:fixpoint/presentation/ownerdashboard_page/ownerdashboard_page.dart';
 import 'package:flutter/material.dart';
 
 class NavigatorService {
@@ -72,5 +71,15 @@ class NavigatorService {
     }
   }
 
-  static void navigateToAndRemoveUntil(OwnerdashboardPage ownerdashboardPage) {}
+  /// Navigates to the given widget and removes all previous routes.
+  static void navigateToAndRemoveUntil(Widget page) {
+    if (navigatorKey.currentState != null) {
+      navigatorKey.currentState?.pushAndRemoveUntil(
+        MaterialPageRoute(builder: (context) => page),
+        (route) => false, // This will remove all previous routes
+      );
+    } else {
+      debugPrint('Navigator state is null');
+    }
+  }
 }

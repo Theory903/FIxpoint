@@ -1,5 +1,6 @@
 import 'package:fixpoint/core/app_export.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'bloc/outlet_bloc.dart';
 import 'models/scrollview_tab1_model.dart';
 import 'models/teammemberlist_item_model.dart';

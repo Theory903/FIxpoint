@@ -1,14 +1,13 @@
-import 'package:equatable/equatable.dart';
+class SidemenuModel {
+  // Define any properties you need for the side menu
+  // For example:
+  String profileName;
+  String location;
+  String outletInfo;
 
-/// This class defines the variables used in the [sidemenu_screen],
-/// and is typically used to hold data that is passed between different parts of the application.
-class SidemenuModel extends Equatable {
-  SidemenuModel();
-
-  SidemenuModel copyWith() {
-    return SidemenuModel();
-  }
-
-  @override
-  List<Object?> get props => [];
+  SidemenuModel({
+    this.profileName = 'Washing Bay',
+    this.location = 'Bhopal, MP',
+    this.outletInfo = '1 Outlet',
+  });
 }

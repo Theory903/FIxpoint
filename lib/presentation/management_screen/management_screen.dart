@@ -1,93 +1,165 @@
-import 'package:fixpoint/core/app_export.dart';
+import 'package:fixpoint/presentation/management_screen/models/outletlist_item_model.dart';
 import 'package:flutter/material.dart';
-import '../../widgets/custom_bottom_bar.dart';
-import '../ownerdashboard_page/ownerdashboard_page.dart';
-import 'bloc/management_bloc.dart';
-import 'iphone_13_mini_four_initial_page.dart';
-import 'models/management_model.dart';
-
+import 'package:get/get.dart';
 
 class ManagementScreen extends StatelessWidget {
-  ManagementScreen({Key? key})
-      : super(
-          key: key,
-        );
-
-  final GlobalKey<NavigatorState> navigatorKey = GlobalKey();
-
-  static Widget builder(BuildContext context) {
-    return BlocProvider<ManagementBloc>(
-      create: (context) => ManagementBloc(ManagementState(
-        managementModelObj: ManagementModel(),
-      ))
-        ..add(ManagementInitialEvent()),
-      child: ManagementScreen(),
-    );
-  }
+  // Controller for managing the outlets
+  final OutletController _outletController = Get.put(OutletController());
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        backgroundColor: appTheme.gray10002,
-        body: Navigator(
-          key: navigatorKey,
-          initialRoute: AppRoutes.appNavigationScreen,
-          onGenerateRoute: (routeSetting) => PageRouteBuilder(
-            pageBuilder: (ctx, ani, ani1) =>
-                getCurrentPage(context, routeSetting.name!),
-            transitionDuration: Duration(seconds: 0),
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Outlet Management'),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.add),
+            onPressed: () {
+              // Show dialog to add a new outlet
+              _showAddOutletDialog(context);
+            },
           ),
-        ),
-        bottomNavigationBar: SizedBox(
-          width: double.maxFinite,
-          child: _buildBottomNavigationBar(context),
-        ),
+        ],
       ),
+      body: Obx(() {
+        if (_outletController.outlets.isEmpty) {
+          return Center(child: Text('No outlets available.'));
+        } else {
+          return ListView.builder(
+            itemCount: _outletController.outlets.length,
+            itemBuilder: (context, index) {
+              final outlet = _outletController.outlets[index];
+              return ListTile(
+                leading: Image.asset(outlet.outletoneOne.value),
+                title: Text(outlet.peopleCounter.value),
+                subtitle: Text(outlet.id.value),
+                trailing: IconButton(
+                  icon: Icon(Icons.edit),
+                  onPressed: () {
+                    // Edit outlet
+                    _showEditOutletDialog(context, outlet);
+                  },
+                ),
+              );
+            },
+          );
+        }
+      }),
     );
   }
 
-  /// Section Widget
-  Widget _buildBottomNavigationBar(BuildContext context) {
-    return SizedBox(
-      width: double.maxFinite,
-      child: CustomBottomBar(
-        onChanged: (BottomBarEnum type) {
-          Navigator.pushNamed(
-              navigatorKey.currentContext!, getCurrentRoute(type));
-        },
-      ),
+  // Show dialog to add a new outlet
+  void _showAddOutletDialog(BuildContext context) {
+    final TextEditingController peopleCounterController = TextEditingController();
+    final TextEditingController outletIdController = TextEditingController();
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Add New Outlet'),
+          content: Column(
+            children: [
+              TextField(
+                controller: peopleCounterController,
+                decoration: InputDecoration(labelText: 'People Counter'),
+              ),
+              TextField(
+                controller: outletIdController,
+                decoration: InputDecoration(labelText: 'Outlet ID'),
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Get.back();
+              },
+              child: Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () {
+                _outletController.addOutlet(
+                  peopleCounterController.text,
+                  outletIdController.text,
+                );
+                Get.back();
+              },
+              child: Text('Add'),
+            ),
+          ],
+        );
+      },
     );
   }
 
-  ///Handling route based on bottom click actions
-  String getCurrentRoute(BottomBarEnum type) {
-    switch (type) {
-      case BottomBarEnum.Home:
-        return AppRoutes.ownerDashboardPage;
-      case BottomBarEnum.Manage:
-        return AppRoutes.managementScreen;
-      case BottomBarEnum.Schedule:
-        return AppRoutes.scheduleScreen;
-      case BottomBarEnum.Review:
-        return AppRoutes.ownerDashboardPage;
-      default:
-        return AppRoutes.managementScreen;
-    }
+  // Show dialog to edit an outlet
+  void _showEditOutletDialog(BuildContext context, OutletlistItemModel outlet) {
+    final TextEditingController peopleCounterController = TextEditingController(text: outlet.peopleCounter.value);
+    final TextEditingController outletIdController = TextEditingController(text: outlet.id.value);
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Edit Outlet'),
+          content: Column(
+            children: [
+              TextField(
+                controller: peopleCounterController,
+                decoration: InputDecoration(labelText: 'People Counter'),
+              ),
+              TextField(
+                controller: outletIdController,
+                decoration: InputDecoration(labelText: 'Outlet ID'),
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Get.back();
+              },
+              child: Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () {
+                _outletController.updateOutlet(
+                  outlet,
+                  peopleCounterController.text,
+                  outletIdController.text,
+                );
+                Get.back();
+              },
+              child: Text('Update'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+}
+
+class OutletController extends GetxController {
+  var outlets = <OutletlistItemModel>[].obs; // Observable list of outlets
+
+  // Add a new outlet
+  void addOutlet(String peopleCounter, String id) {
+    final newOutlet = OutletlistItemModel(
+      peopleCounter: peopleCounter,
+      id: id,
+    );
+    outlets.add(newOutlet);
   }
 
-  ///Handling page based on route
-  Widget getCurrentPage(
-    BuildContext context,
-    String currentRoute,
-  ) {
-    switch (currentRoute) {
-      case AppRoutes.scheduleScreen:
-        return Iphone13MiniFourInitialPage.builder(context);
-      case AppRoutes.ownerDashboardPage:
-        return OwnerdashboardPage.builder(context);
-      default:
-        return DefaultWidget();
-    }
+  // Update an existing outlet
+  void updateOutlet(OutletlistItemModel outlet, String peopleCounter, String id) {
+    outlet.peopleCounter.value = peopleCounter;
+    outlet.id.value = id;
+  }
+
+  // Delete an outlet
+  void deleteOutlet(OutletlistItemModel outlet) {
+    outlets.remove(outlet);
   }
 }

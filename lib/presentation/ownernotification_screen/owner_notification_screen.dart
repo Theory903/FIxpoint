@@ -1,30 +1,19 @@
 import 'package:fixpoint/core/app_export.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import '../../widgets/app_bar/appbar_leading_iconbutton.dart';
 import '../../widgets/app_bar/appbar_subtitle_one.dart';
 import '../../widgets/app_bar/custom_app_bar.dart';
-import 'bloc/ownernotification_bloc.dart';
-import 'models/ownernotification_model.dart';
+import 'controllers/ownernotification_controller.dart';
 import 'models/todaynotifications_item_model.dart';
 import 'models/yesterdaynotifications_item_model.dart';
 import 'widgets/todaynotifications_item_widget.dart';
 import 'widgets/yesterdaynotifications_item_widget.dart';
 
 class OwnernotificationScreen extends StatelessWidget {
-  const OwnernotificationScreen({Key? key})
-      : super(
-          key: key,
-        );
+  final OwnernotificationController controller = Get.put(OwnernotificationController());
 
-  static Widget builder(BuildContext context) {
-    return BlocProvider<OwnernotificationBloc>(
-      create: (context) => OwnernotificationBloc(OwnernotificationState(
-        ownernotificationModelObj: OwnernotificationModel(),
-      ))
-        ..add(OwnernotificationInitialEvent()),
-      child: OwnernotificationScreen(),
-    );
-  }
+  OwnernotificationScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -40,7 +29,6 @@ class OwnernotificationScreen extends StatelessWidget {
             right: 24.h,
           ),
           child: Column(
-            mainAxisSize: MainAxisSize.max,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
@@ -55,7 +43,7 @@ class OwnernotificationScreen extends StatelessWidget {
                 style: CustomTextStyles.bodySmallInterPrimaryContainer,
               ),
               SizedBox(height: 16.h),
-              _buildYesterdayNotifications(context)
+              _buildYesterdayNotifications(context),
             ],
           ),
         ),
@@ -63,7 +51,7 @@ class OwnernotificationScreen extends StatelessWidget {
     );
   }
 
-  /// Section Widget
+  /// AppBar Widget
   PreferredSizeWidget _buildAppBar(BuildContext context) {
     return CustomAppBar(
       leadingWidth: 64.h,
@@ -75,7 +63,7 @@ class OwnernotificationScreen extends StatelessWidget {
           bottom: 8.h,
         ),
         onTap: () {
-          onTapArrowleftone(context);
+          onTapArrowleftone();
         },
       ),
       centerTitle: true,
@@ -85,18 +73,48 @@ class OwnernotificationScreen extends StatelessWidget {
     );
   }
 
-  /// Section Widget
+  /// Today Notifications Widget
   Widget _buildTodayNotifications(BuildContext context) {
     return Padding(
       padding: EdgeInsets.only(right: 6.h),
-      child: BlocSelector<OwnernotificationBloc, OwnernotificationState,
-          OwnernotificationModel?>(
-        selector: (state) => state.ownernotificationModelObj,
-        builder: (context, ownernotificationModelObj) {
+      child: Obx(() {
+        var todayNotifications = controller.ownernotificationModelObj.value.todaynotificationsItemList;
+        return ListView.separated(
+          padding: EdgeInsets.zero,
+          physics: NeverScrollableScrollPhysics(),
+          shrinkWrap: true,
+          separatorBuilder: (context, index) {
+            return Padding(
+              padding: EdgeInsets.symmetric(vertical: 9.0.h),
+              child: Divider(
+                height: 1.h,
+                thickness: 1.h,
+                color: appTheme.gray40004,
+              ),
+            );
+          },
+          itemCount: todayNotifications.length,
+          itemBuilder: (context, index) {
+            TodaynotificationsItemModel model = todayNotifications[index];
+            return TodaynotificationsItemWidget(
+              model,
+            );
+          },
+        );
+      }),
+    );
+  }
+
+  /// Yesterday Notifications Widget
+  Widget _buildYesterdayNotifications(BuildContext context) {
+    return Expanded(
+      child: Padding(
+        padding: EdgeInsets.only(right: 6.h),
+        child: Obx(() {
+          var yesterdayNotifications = controller.ownernotificationModelObj.value.yesterdaynotificationsItemList;
           return ListView.separated(
             padding: EdgeInsets.zero,
-            physics: NeverScrollableScrollPhysics(),
-            shrinkWrap: true,
+            physics: BouncingScrollPhysics(),
             separatorBuilder: (context, index) {
               return Padding(
                 padding: EdgeInsets.symmetric(vertical: 9.0.h),
@@ -107,67 +125,21 @@ class OwnernotificationScreen extends StatelessWidget {
                 ),
               );
             },
-            itemCount:
-                ownernotificationModelObj?.todaynotificationsItemList.length ??
-                    0,
+            itemCount: yesterdayNotifications.length,
             itemBuilder: (context, index) {
-              TodaynotificationsItemModel model = ownernotificationModelObj
-                      ?.todaynotificationsItemList[index] ??
-                  TodaynotificationsItemModel();
-              return TodaynotificationsItemWidget(
+              YesterdaynotificationsItemModel model = yesterdayNotifications[index];
+              return YesterdaynotificationsItemWidget(
                 model,
               );
             },
           );
-        },
-      ),
-    );
-  }
-
-  /// Section Widget
-  Widget _buildYesterdayNotifications(BuildContext context) {
-    return Expanded(
-      child: Padding(
-        padding: EdgeInsets.only(right: 6.h),
-        child: BlocSelector<OwnernotificationBloc, OwnernotificationState,
-            OwnernotificationModel?>(
-          selector: (state) => state.ownernotificationModelObj,
-          builder: (context, ownernotificationModelObj) {
-            return ListView.separated(
-              padding: EdgeInsets.zero,
-              physics: BouncingScrollPhysics(),
-              shrinkWrap: true,
-              separatorBuilder: (context, index) {
-                return Padding(
-                  padding: EdgeInsets.symmetric(vertical: 9.0.h),
-                  child: Divider(
-                    height: 1.h,
-                    thickness: 1.h,
-                    color: appTheme.gray40004,
-                  ),
-                );
-              },
-              itemCount: ownernotificationModelObj
-                      ?.yesterdaynotificationsItemList.length ??
-                  0,
-              itemBuilder: (context, index) {
-                YesterdaynotificationsItemModel model =
-                    ownernotificationModelObj
-                            ?.yesterdaynotificationsItemList[index] ??
-                        YesterdaynotificationsItemModel();
-                return YesterdaynotificationsItemWidget(
-                  model,
-                );
-              },
-            );
-          },
-        ),
+        }),
       ),
     );
   }
 
   /// Navigates to the previous screen.
-  onTapArrowleftone(BuildContext context) {
-    NavigatorService.goBack();
+  void onTapArrowleftone() {
+    Get.back();
   }
 }

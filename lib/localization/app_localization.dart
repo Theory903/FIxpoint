@@ -1,43 +1,18 @@
-import 'package:fixpoint/core/utils/navigator_service.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/foundation.dart';
-import 'en_us/en_us_translations.dart';
+import 'package:get/get.dart';
+import 'en_us/en_us_translations.dart';  // Assuming this contains your en_us map
+// If you have other translations (e.g., es_us, fr_fr), import them as well
 
-extension LocalizationExtension on String {
-  String get tr => AppLocalization.of().getString(this);
-}
-
-// ignore_for_file: must_be_immutable
-class AppLocalization {
-  AppLocalization(this.locale);
-
-  Locale locale;
-
-  static final Map<String, Map<String, String>> _localizedValues = {'en': enUs};
-
-  static AppLocalization of() {
-    return Localizations.of<AppLocalization>(
-        NavigatorService.navigatorKey.currentContext!, AppLocalization)!;
-  }
-
-  static List<String> languages() => _localizedValues.keys.toList();
-  String getString(String text) =>
-      _localizedValues[locale.languageCode]![text] ?? text;
-}
-
-class AppLocalizationDelegate extends LocalizationsDelegate<AppLocalization> {
-  const AppLocalizationDelegate();
-
+// AppLocalization class extending GetX Translations
+class AppLocalization extends Translations {
+  // Override the keys method to define translation maps
   @override
-  bool isSupported(Locale locale) =>
-      AppLocalization.languages().contains(locale.languageCode);
-//Returning a SynchronousFuture here because an async "load" operation
-//cause an async "load" operation
-  @override
-  Future<AppLocalization> load(Locale locale) {
-    return SynchronousFuture<AppLocalization>(AppLocalization(locale));
-  }
+  Map<String, Map<String, String>> get keys => {
+    'en_US': enUs,  // Reference to your en_us translations map
+    // If you have more languages, you can add them here like this:
+    // 'es_ES': esEs, // Spanish translation map
+    // 'fr_FR': frFr, // French translation map
+  };
 
-  @override
-  bool shouldReload(AppLocalizationDelegate old) => false;
+  // Optionally, you can define other logic for loading translations or additional features if needed.
+  static List<String> languages() => ['en', /* 'es', 'fr', etc. */];
 }

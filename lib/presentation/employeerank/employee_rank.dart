@@ -1,5 +1,6 @@
 import 'package:fixpoint/core/app_export.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import '../../widgets/app_bar/appbar_leading_iconbutton.dart';
 import '../../widgets/app_bar/custom_app_bar.dart';
 import 'bloc/iphone_13_mini_thirtysix_bloc.dart';

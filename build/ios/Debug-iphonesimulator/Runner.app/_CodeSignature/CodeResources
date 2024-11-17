@@ -46,7 +46,7 @@
 		</data>
 		<key>Frameworks/App.framework/App</key>
 		<data>
-		wFfHJoz/V9iH1x8/TwJ0dtmztZQ=
+		krhKpmsEf6xbtEg6R+tm4EnWCJ0=
 		</data>
 		<key>Frameworks/App.framework/Info.plist</key>
 		<data>
@@ -54,7 +54,7 @@
 		</data>
 		<key>Frameworks/App.framework/_CodeSignature/CodeResources</key>
 		<data>
-		4fjtwSj1wo8JEhaRHOJaKNIO7Ro=
+		AQe47GPUC44BV89tIDAnLSjUj7c=
 		</data>
 		<key>Frameworks/App.framework/flutter_assets/AssetManifest.bin</key>
 		<data>
@@ -70,7 +70,7 @@
 		</data>
 		<key>Frameworks/App.framework/flutter_assets/NOTICES.Z</key>
 		<data>
-		Yfn8VwEIBujet8f/Qe0WwjsGcEg=
+		+PiB1mdgegXW+YZZgY4Ue8BCjgA=
 		</data>
 		<key>Frameworks/App.framework/flutter_assets/assets/fonts/DMSansMedium.ttf</key>
 		<data>
@@ -726,7 +726,7 @@
 		</data>
 		<key>Frameworks/App.framework/flutter_assets/kernel_blob.bin</key>
 		<data>
-		umndxyjqsk1zkUQLIScHKdCwrjU=
+		ZTwv6JtR8BweZGSwxsPH88Millc=
 		</data>
 		<key>Frameworks/App.framework/flutter_assets/packages/flutter_chat_ui/assets/2.0x/icon-arrow.png</key>
 		<data>
@@ -1573,7 +1573,7 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			EKyG1o14Ys3+IO40/jzBdBNrvQidVGgbtqucxF+X1Wg=
+			DTYRR7QmKYolf+iiRbUOQrdMb+rst/b6WU+g8Pe+J98=
 			</data>
 		</dict>
 		<key>Frameworks/App.framework/Info.plist</key>
@@ -1587,7 +1587,7 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			xgND168+jB3WrZ5QeGYSFbo9um1XjWbEpJLLrRDetBI=
+			IZXeMJRh1MtVUdE3IRUR0acJ2NDwJO+9N1HAwEGuh5g=
 			</data>
 		</dict>
 		<key>Frameworks/App.framework/flutter_assets/AssetManifest.bin</key>
@@ -1615,7 +1615,7 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			aM7FOd1sIO2apX7mRWZoqpWsMA5Sb8ejEgwzDhiM/9s=
+			G9M9vNOWXTeIDWcLo+ZbOUU618mMT8wEvbMNiScpBAo=
 			</data>
 		</dict>
 		<key>Frameworks/App.framework/flutter_assets/assets/fonts/DMSansMedium.ttf</key>
@@ -2763,7 +2763,7 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			yu3JJumYAcaUb2aaTNWcN3tuJVRUCOXMHJgWb7v01W8=
+			TqMQ7AM6FJ/B6htcMEKcqu9526qtg42lksB+Sy5EGSw=
 			</data>
 		</dict>
 		<key>Frameworks/App.framework/flutter_assets/packages/flutter_chat_ui/assets/2.0x/icon-arrow.png</key>

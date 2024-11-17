@@ -1,36 +1,28 @@
 import 'package:fixpoint/core/app_export.dart';
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
+import 'package:fixpoint/theme/theme_helper.dart'; // Import AppTheme class
+import 'package:get/get.dart';
 import '../../widgets/app_bar/appbar_leading_iconbutton.dart';
 import '../../widgets/app_bar/custom_app_bar.dart';
-import 'models/chart_one_chart_model1.dart';
-import 'bloc/iphone_13_mini_seven_bloc.dart';
-import 'models/iphone_13_mini_seven_model.dart';
+import 'controllers/overall_report_controller.dart';
 import 'models/metricslist_item_model.dart';
 import 'widgets/metricslist_item_widget.dart';
 
 class OverallReportScreen extends StatelessWidget {
-  const OverallReportScreen({Key? key})
-      : super(
-          key: key,
-        );
+  final OverallReportController controller = Get.put(OverallReportController());
 
-  static Widget builder(BuildContext context) {
-    return BlocProvider<Iphone13MiniSevenBloc>(
-      create: (context) => Iphone13MiniSevenBloc(Iphone13MiniSevenState(
-        iphone13MiniSevenModelObj: Iphone13MiniSevenModel(),
-      ))
-        ..add(Iphone13MiniSevenInitialEvent()),
-      child: OverallReportScreen(),
-    );
-  }
+  OverallReportScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    final ThemeData theme = Theme.of(context); // Initialize theme
+    final customAppTheme = appTheme; // Initialize appTheme if you have one
+
     return SafeArea(
       child: Scaffold(
-        backgroundColor: appTheme.gray10002,
-        appBar: _buildAppBar(context),
+        backgroundColor: customAppTheme.gray10002,
+        appBar: _buildAppBar(context, theme),
         body: SizedBox(
           width: double.maxFinite,
           child: SingleChildScrollView(
@@ -55,7 +47,7 @@ class OverallReportScreen extends StatelessWidget {
                       ],
                     ),
                   ),
-                  _buildOverviewSection(context)
+                  _buildOverviewSection(context, theme, customAppTheme)
                 ],
               ),
             ),
@@ -65,8 +57,8 @@ class OverallReportScreen extends StatelessWidget {
     );
   }
 
-  /// Section Widget
-  PreferredSizeWidget _buildAppBar(BuildContext context) {
+  /// AppBar Widget
+  PreferredSizeWidget _buildAppBar(BuildContext context, ThemeData theme) {
     return CustomAppBar(
       leadingWidth: 64.h,
       leading: AppbarLeadingIconbutton(
@@ -77,7 +69,7 @@ class OverallReportScreen extends StatelessWidget {
           bottom: 8.h,
         ),
         onTap: () {
-          onTapArrowleftone(context);
+          onTapArrowleftone();
         },
       ),
       centerTitle: true,
@@ -99,166 +91,158 @@ class OverallReportScreen extends StatelessWidget {
     );
   }
 
-  /// Section Widget
+  /// Metrics List Widget
   Widget _buildMetricsList(BuildContext context) {
     return Padding(
       padding: EdgeInsets.only(right: 36.h),
-      child: BlocSelector<Iphone13MiniSevenBloc, Iphone13MiniSevenState,
-          Iphone13MiniSevenModel?>(
-        selector: (state) => state.iphone13MiniSevenModelObj,
-        builder: (context, iphone13MiniSevenModelObj) {
-          return ListView.separated(
-            padding: EdgeInsets.zero,
-            physics: NeverScrollableScrollPhysics(),
-            shrinkWrap: true,
-            separatorBuilder: (context, index) {
-              return SizedBox(
-                height: 10.h,
-              );
-            },
-            itemCount:
-                iphone13MiniSevenModelObj?.metricslistItemList.length ?? 0,
-            itemBuilder: (context, index) {
-              MetricslistItemModel model =
-                  iphone13MiniSevenModelObj?.metricslistItemList[index] ??
-                      MetricslistItemModel();
-              return MetricslistItemWidget(
-                model,
-              );
-            },
-          );
-        },
-      ),
+      child: Obx(() {
+        var metricsList = controller.overallReportModelObj.value.metricslistItemList;
+        return ListView.separated(
+          padding: EdgeInsets.zero,
+          physics: NeverScrollableScrollPhysics(),
+          shrinkWrap: true,
+          separatorBuilder: (context, index) {
+            return SizedBox(
+              height: 10.h,
+            );
+          },
+          itemCount: metricsList.length,
+          itemBuilder: (context, index) {
+            MetricslistItemModel model = metricsList[index];
+            return MetricslistItemWidget(
+              model,
+            );
+          },
+        );
+      }),
     );
   }
 
-  /// Section Widget
-  Widget _buildChartone(BuildContext context) {
+  /// Chart Widget
+  Widget _buildChartone(BuildContext context, ThemeData theme) {
     return Align(
       alignment: Alignment.topCenter,
       child: SizedBox(
         height: 154.h,
         width: 524.h,
-        child: BlocBuilder<Iphone13MiniSevenBloc, Iphone13MiniSevenState>(
-          builder: (context, state) {
-            return LineChart(
-              LineChartData(
-                minX: 0,
-                minY: 0,
-                maxX: 6,
-                maxY: 5,
-                borderData: FlBorderData(show: false),
-                lineTouchData: LineTouchData(
-                  enabled: true,
-                  handleBuiltInTouches: true,
-                  getTouchLineStart: (chartData, index) => 0.0,
-                  getTouchLineEnd: (chartData, index) => 0.0,
-                  touchTooltipData: LineTouchTooltipData(
-                    getTooltipItems: (spots) {
-                      return spots.map(
-                        (LineBarSpot touchedSpot) {
-                          final textStyle = TextStyle(
-                            color: touchedSpot.bar.gradient?.colors.first ??
-                                touchedSpot.bar.color ??
-                                Colors.blueGrey,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 14,
-                          );
-                          return LineTooltipItem(
-                            touchedSpot.y.toStringAsFixed(2),
-                            textStyle,
-                          );
-                        },
-                      ).toList();
+        child: Obx(() {
+          var chartData = controller.overallReportModelObj.value.chartOneChartModel1Obj;
+
+          return LineChart(
+            LineChartData(
+              minX: 0,
+              minY: 0,
+              maxX: 6,
+              maxY: 5,
+              borderData: FlBorderData(show: false),
+              lineTouchData: LineTouchData(
+                enabled: true,
+                handleBuiltInTouches: true,
+                touchTooltipData: LineTouchTooltipData(
+                  getTooltipItems: (spots) {
+                    return spots.map(
+                      (LineBarSpot touchedSpot) {
+                        final textStyle = TextStyle(
+                          color: touchedSpot.bar.gradient?.colors.first ??
+                              touchedSpot.bar.color ??
+                              Colors.blueGrey,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 14,
+                        );
+                        return LineTooltipItem(
+                          touchedSpot.y.toStringAsFixed(2),
+                          textStyle,
+                        );
+                      },
+                    ).toList();
+                  },
+                ),
+              ),
+              lineBarsData: chartData.map((model) {
+                return LineChartBarData(
+                  isCurved: true,
+                  isStrokeCapRound: true,
+                  barWidth: model.barWidth,
+                  color: model.color,
+                  gradient: model.gradient,
+                  dotData: FlDotData(show: false),
+                  spots: model.spots,
+                );
+              }).toList(),
+              gridData: FlGridData(
+                verticalInterval: 1,
+                horizontalInterval: 1,
+                drawHorizontalLine: false,
+                getDrawingVerticalLine: (value) {
+                  return FlLine(
+                    color: Color(0XFF202020),
+                    strokeWidth: 1,
+                  );
+                },
+              ),
+              titlesData: FlTitlesData(
+                rightTitles: AxisTitles(
+                  sideTitles: SideTitles(showTitles: false),
+                ),
+                topTitles: AxisTitles(
+                  sideTitles: SideTitles(showTitles: false),
+                ),
+                bottomTitles: AxisTitles(
+                  sideTitles: SideTitles(
+                    showTitles: true,
+                    getTitlesWidget: (double value, TitleMeta meta) {
+                      String title;
+                      switch (value.toInt()) {
+                        case 1:
+                          title = "Apr";
+                          break;
+                        case 2:
+                          title = "May";
+                          break;
+                        case 3:
+                          title = "Jun";
+                          break;
+                        case 4:
+                          title = "Jul";
+                          break;
+                        case 5:
+                          title = "Aug";
+                          break;
+                        case 6:
+                          title = "Sep";
+                          break;
+                        default:
+                          title = '';
+                          break;
+                      }
+                      return Text(
+                        title,
+                        style: TextStyle(
+                          color: theme.colorScheme.onSecondaryContainer.withOpacity(0.6),
+                          fontSize: 13.fSize,
+                          fontFamily: 'SF Pro Display',
+                          fontWeight: FontWeight.w400,
+                        ),
+                      );
                     },
                   ),
                 ),
-                lineBarsData: List.generate(
-                  state.iphone13MiniSevenModelObj?.chartOneChartModel1Obj
-                          .length ??
-                      0,
-                  (index) {
-                    var model = state.iphone13MiniSevenModelObj
-                            ?.chartOneChartModel1Obj[index] ??
-                        ChartOneChartModel1();
-                    return LineChartBarData(
-                      isCurved: true,
-                      isStrokeCapRound: true,
-                      barWidth: model.barWidth,
-                      color: model.color,
-                      gradient: model.gradient,
-                      dotData: FlDotData(show: false),
-                      spots: model.spots,
-                    );
-                  },
-                ),
-                gridData: FlGridData(
-                  verticalInterval: 1,
-                  horizontalInterval: 1,
-                  drawHorizontalLine: false,
-                  getDrawingVerticalLine: (value) {
-                    return FlLine(
-                      color: Color(0XFF202020),
-                      strokeWidth: 1,
-                    );
-                  },
-                ),
-                titlesData: FlTitlesData(
-                  rightTitles: AxisTitles(
-                    sideTitles: SideTitles(showTitles: false),
-                  ),
-                  topTitles: AxisTitles(
-                    sideTitles: SideTitles(showTitles: false),
-                  ),
-                  bottomTitles: AxisTitles(
-                    sideTitles: SideTitles(
-                      showTitles: true,
-                      getTitlesWidget: (double value, TitleMeta meta) {
-                        var title = '';
-                        switch (value) {
-                          case 1:
-                            title = "Apr";
-                          case 2:
-                            title = "May";
-                          case 3:
-                            title = "Jun";
-                          case 4:
-                            title = "Jul";
-                          case 5:
-                            title = "Aug";
-                          case 6:
-                            title = "Sep";
-                        }
-                        return Text(
-                          title,
-                          style: TextStyle(
-                            color: theme.colorScheme.onSecondaryContainer
-                                .withOpacity(0.6),
-                            fontSize: 13.fSize,
-                            fontFamily: 'SF Pro Display',
-                            fontWeight: FontWeight.w400,
-                          ),
-                        );
-                      },
-                    ),
-                  ),
-                  leftTitles: AxisTitles(
-                    sideTitles: SideTitles(showTitles: false),
-                  ),
+                leftTitles: AxisTitles(
+                  sideTitles: SideTitles(showTitles: false),
                 ),
               ),
-              duration: const Duration(
-                milliseconds: 500,
-              ),
-            );
-          },
-        ),
+            ),
+            duration: const Duration(
+              milliseconds: 500,
+            ),
+          );
+        }),
       ),
     );
   }
 
-  /// Section Widget
-  Widget _buildOverviewSection(BuildContext context) {
+  /// Overview Section Widget
+  Widget _buildOverviewSection(BuildContext context, ThemeData theme,appTheme) {
     return Align(
       alignment: Alignment.topCenter,
       child: Container(
@@ -282,7 +266,7 @@ class OverallReportScreen extends StatelessWidget {
                         height: 172.h,
                         width: 376.h,
                       ),
-                      _buildChartone(context)
+                      _buildChartone(context, theme)
                     ],
                   ),
                 ),
@@ -319,15 +303,9 @@ class OverallReportScreen extends StatelessWidget {
                   )
                 ],
               ),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    "msg_get_overall_report".tr,
-                    style: CustomTextStyles.labelLargeBluegray90005_1,
-                  )
-                ],
+              child: Text(
+                "msg_get_overall_report".tr,
+                style: CustomTextStyles.labelLargeBluegray90005_1,
               ),
             )
           ],
@@ -337,7 +315,7 @@ class OverallReportScreen extends StatelessWidget {
   }
 
   /// Navigates to the previous screen.
-  onTapArrowleftone(BuildContext context) {
-    NavigatorService.goBack();
+  void onTapArrowleftone() {
+    Get.back();
   }
 }

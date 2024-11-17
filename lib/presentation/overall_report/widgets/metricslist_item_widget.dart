@@ -1,102 +1,70 @@
-import 'package:fixpoint/core/app_export.dart';
+// lib/presentation/overall_report/widgets/metricslist_item_widget.dart
+
 import 'package:flutter/material.dart';
-import '../../../widgets/custom_icon_button.dart';
 import '../models/metricslist_item_model.dart';
+import '../../../core/app_export.dart'; // Adjust the import path as needed
 
-// ignore_for_file: must_be_immutable
 class MetricslistItemWidget extends StatelessWidget {
-  MetricslistItemWidget(this.metricslistItemModelObj, {Key? key})
-      : super(
-          key: key,
-        );
+  final MetricslistItemModel metricslistItemModelObj;
 
-  MetricslistItemModel metricslistItemModelObj;
+  const MetricslistItemWidget(
+    this.metricslistItemModelObj, {
+    Key? key,
+  }) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context) { // Assuming you have an AppTheme class and a method to get it from context
     return Container(
-      margin: EdgeInsets.only(
-        left: 4.h,
-        right: 30.h,
-      ),
-      padding: EdgeInsets.symmetric(
-        horizontal: 16.h,
-        vertical: 32.h,
-      ),
+      width: double.infinity,
+      margin: EdgeInsets.symmetric(vertical: 8.h),
+      padding: EdgeInsets.all(16.h),
       decoration: BoxDecoration(
-        color: theme.colorScheme.onErrorContainer,
-        borderRadius: BorderRadiusStyle.roundedBorder14,
+        color: appTheme.whiteA700,
+        borderRadius: BorderRadius.circular(8.h),
         boxShadow: [
           BoxShadow(
-            color: appTheme.black900.withOpacity(0.03),
+            color: appTheme.black900.withOpacity(0.1),
             spreadRadius: 2.h,
             blurRadius: 2.h,
-            offset: Offset(
-              0,
-              21,
-            ),
-          )
+            offset: Offset(0, 1),
+          ),
         ],
       ),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          CustomIconButton(
-            height: 54.h,
-            width: 54.h,
-            decoration: IconButtonStyleHelper.fillLightGreen,
-            child: CustomImageView(
-              imagePath: metricslistItemModelObj.layerfourOne!,
-            ),
+          Image.asset(
+            metricslistItemModelObj.layerFourOne,
+            height: 40.h,
+            width: 40.h,
           ),
-          Expanded(
-            child: Container(
-              padding: EdgeInsets.symmetric(horizontal: 2.h),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Expanded(
-                    child: Padding(
-                      padding: EdgeInsets.only(left: 8.h),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            metricslistItemModelObj.totalrevenue!,
-                            style:
-                                CustomTextStyles.bodyMediumRennerBluegray30002,
-                          ),
-                          SizedBox(height: 12.h),
-                          Text(
-                            metricslistItemModelObj.k!,
-                            style: CustomTextStyles.titleLargeSpartan,
-                          )
-                        ],
-                      ),
-                    ),
-                  ),
-                  Align(
-                    alignment: Alignment.bottomCenter,
-                    child: Container(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: 10.h,
-                        vertical: 2.h,
-                      ),
-                      decoration: BoxDecoration(
-                        color: appTheme.green50,
-                        borderRadius: BorderRadiusStyle.roundedBorder10,
-                      ),
-                      child: Text(
-                        metricslistItemModelObj.frameone!,
-                        textAlign: TextAlign.left,
-                        style: CustomTextStyles.labelMediumRennerGreen400,
-                      ),
-                    ),
-                  )
-                ],
+          SizedBox(width: 12.h),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                metricslistItemModelObj.totalRevenue,
+                style: TextStyle(
+                  fontSize: 16.fSize,
+                  fontWeight: FontWeight.bold,
+                  color: appTheme.gray900,
+                ),
               ),
-            ),
-          )
+              SizedBox(height: 4.h),
+              Text(
+                metricslistItemModelObj.kValue,
+                style: TextStyle(
+                  fontSize: 14.fSize,
+                  color: appTheme.gray600,
+                ),
+              ),
+            ],
+          ),
+          Spacer(),
+          Image.asset(
+            metricslistItemModelObj.frameOne,
+            height: 24.h,
+            width: 24.h,
+          ),
         ],
       ),
     );

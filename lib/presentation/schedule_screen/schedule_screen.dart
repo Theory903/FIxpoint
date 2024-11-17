@@ -196,13 +196,13 @@ class ScheduleScreenState extends State<ScheduleScreen>
   String getCurrentRoute(BottomBarEnum type) {
     switch (type) {
       case BottomBarEnum.Home:
-        return AppRoutes.ownerDashboardPage;
+        return AppRoutes.OwnerDashboardPage;
       case BottomBarEnum.Manage:
         return AppRoutes.managementScreen;
       case BottomBarEnum.Schedule:
         return AppRoutes.scheduleScreen;
       case BottomBarEnum.Review:
-        return AppRoutes.ownerDashboardPage;
+        return AppRoutes.OwnerDashboardPage;
       default:
         return "/";
     }

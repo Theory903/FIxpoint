@@ -1,5 +1,6 @@
 import 'package:fixpoint/core/app_export.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'bloc/iphone_13_mini_thirtysix_bloc.dart';
 import 'models/scrollview_tab2_model.dart';
 import 'models/teammemberlist1_item_model.dart';
@@ -263,28 +264,28 @@ class ScrollviewTab2PageState extends State<ScrollviewTab2Page> {
   /// Navigates to the employeeDashboardPage when the action is triggered.
   onTapRowrajusharma(BuildContext context) {
     NavigatorService.pushNamed(
-      AppRoutes.employeeDashboardPage,
+      AppRoutes.EmployeeDashboardPage,
     );
   }
 
   /// Navigates to the employeeDashboardPage when the action is triggered.
   onTapImgImagetwo(BuildContext context) {
     NavigatorService.pushNamed(
-      AppRoutes.employeeDashboardPage,
+      AppRoutes.EmployeeDashboardPage,
     );
   }
 
   /// Navigates to the employeeDashboardPage when the action is triggered.
   onTapImgImagethree(BuildContext context) {
     NavigatorService.pushNamed(
-      AppRoutes.employeeDashboardPage,
+      AppRoutes.EmployeeDashboardPage,
     );
   }
 
   /// Navigates to the employeeDashboardPage when the action is triggered.
   onTapImgImagefour(BuildContext context) {
     NavigatorService.pushNamed(
-      AppRoutes.employeeDashboardPage,
+      AppRoutes.EmployeeDashboardPage,
     );
   }
 }

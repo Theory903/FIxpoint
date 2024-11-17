@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:fixpoint/core/app_export.dart';
 import '../../theme/custom_button_style.dart';
 import '../../widgets/app_bar/appbar_leading_iconbutton.dart';
@@ -6,26 +7,16 @@ import '../../widgets/app_bar/appbar_subtitle_one.dart';
 import '../../widgets/app_bar/custom_app_bar.dart';
 import '../../widgets/custom_elevated_button.dart';
 import '../../widgets/custom_icon_button.dart';
-import 'bloc/loginchoice_bloc.dart';
-import 'models/loginchoice_model.dart';
+import 'controller/loginchoice_controller.dart';
 
 class LoginchoiceScreen extends StatelessWidget {
   const LoginchoiceScreen({Key? key}) : super(key: key);
 
-  static Widget builder(BuildContext context) {
-    return BlocProvider<LoginchoiceBloc>(
-      create: (context) => LoginchoiceBloc(LoginchoiceState(
-        loginchoiceModelObj: LoginchoiceModel(),
-      ))
-        ..add(LoginchoiceInitialEvent()),
-      child: LoginchoiceScreen(),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<LoginchoiceBloc, LoginchoiceState>(
-      builder: (context, state) {
+    return GetBuilder<LoginchoiceController>(
+      init: LoginchoiceController(),
+      builder: (controller) {
         return SafeArea(
           child: Scaffold(
             backgroundColor: appTheme.gray10002,
@@ -38,7 +29,7 @@ class LoginchoiceScreen extends StatelessWidget {
                   _buildSelectTypeSection(context),
                   SizedBox(height: 26.h),
                   Text(
-                    "msg_welcome_to_fixpoint".tr,
+                    Trans("msg_welcome_to_fixpoint").tr,
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                     textAlign: TextAlign.center,
@@ -53,10 +44,10 @@ class LoginchoiceScreen extends StatelessWidget {
                       margin: EdgeInsets.symmetric(horizontal: 12.h),
                       child: Column(
                         children: [
-                          _buildOwnerEmployeeOptions(context),
+                          _buildOwnerEmployeeOptions(controller),
                           Spacer(),
                           CustomElevatedButton(
-                            text: "lbl_select".tr,
+                            text: Trans("lbl_select").tr,
                             buttonStyle: CustomButtonStyles.outlineBlueGray,
                           )
                         ],
@@ -79,12 +70,12 @@ class LoginchoiceScreen extends StatelessWidget {
         imagePath: ImageConstant.imgArrowLeftBlack900,
         margin: EdgeInsets.only(left: 24.h, top: 8.h, bottom: 8.h),
         onTap: () {
-          NavigatorService.goBack();
+          Get.back();
         },
       ),
       centerTitle: true,
       title: AppbarSubtitleOne(
-        text: "lbl_options".tr,
+        text: Trans("lbl_options").tr,
       ),
     );
   }
@@ -96,7 +87,7 @@ class LoginchoiceScreen extends StatelessWidget {
       child: Column(
         children: [
           Text(
-            "lbl_select_type".tr,
+            Trans("lbl_select_type").tr,
             style: CustomTextStyles.titleLarge_1,
           )
         ],
@@ -104,7 +95,7 @@ class LoginchoiceScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildOwnerEmployeeOptions(BuildContext context) {
+  Widget _buildOwnerEmployeeOptions(LoginchoiceController controller) {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 6.h),
       width: double.maxFinite,
@@ -112,25 +103,19 @@ class LoginchoiceScreen extends StatelessWidget {
         children: [
           Expanded(
             child: _buildOptionCard(
-              context,
-              onTap: () {
-                NavigatorService.pushNamed(AppRoutes.loginPageScreen);
-              },
+              onTap: controller.onOwnerSelected,
               imagePath: ImageConstant.imgGroup1,
-              title: "lbl_owner".tr,
-              description: "msg_lorem_ipsum_dolor".tr,
+              title: Trans("lbl_owner").tr,
+              description: Trans("msg_lorem_ipsum_dolor").tr,
             ),
           ),
           SizedBox(width: 18.h),
           Expanded(
             child: _buildOptionCard(
-              context,
-              onTap: () {
-                navigateToIPhone13MiniSplaTwentyFour(context);
-              },
+              onTap: controller.onEmployeeSelected,
               imagePath: ImageConstant.imgGroup2,
-              title: "lbl_employee".tr,
-              description: "msg_lorem_ipsum_dolor".tr,
+              title: Trans("lbl_employee").tr,
+              description: Trans("msg_lorem_ipsum_dolor").tr,
             ),
           ),
         ],
@@ -138,8 +123,7 @@ class LoginchoiceScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildOptionCard(
-    BuildContext context, {
+  Widget _buildOptionCard({
     required VoidCallback onTap,
     required String imagePath,
     required String title,
@@ -189,9 +173,5 @@ class LoginchoiceScreen extends StatelessWidget {
         ),
       ),
     );
-  }
-
-  void navigateToIPhone13MiniSplaTwentyFour(BuildContext context) {
-    // Implement navigation logic here
   }
 }

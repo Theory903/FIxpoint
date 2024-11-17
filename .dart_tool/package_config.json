@@ -242,6 +242,12 @@
       "languageVersion": "3.2"
     },
     {
+      "name": "get",
+      "rootUri": "file:///Users/theory903/.pub-cache/hosted/pub.dev/get-4.6.6",
+      "packageUri": "lib/",
+      "languageVersion": "2.15"
+    },
+    {
       "name": "html",
       "rootUri": "file:///Users/theory903/.pub-cache/hosted/pub.dev/html-0.15.5",
       "packageUri": "lib/",
@@ -692,7 +698,7 @@
       "languageVersion": "3.4"
     }
   ],
-  "generated": "2024-11-14T05:33:08.036184Z",
+  "generated": "2024-11-15T06:42:12.167646Z",
   "generator": "pub",
   "generatorVersion": "3.5.4",
   "flutterRoot": "file:///Users/theory903/Documents/flutter",

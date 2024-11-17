@@ -324,4 +324,6 @@ class LightCodeColors {
   Color get yellow100 => Color(0XFFFFFCB5);
 
   get primaryColor => null;
+
+  Color get deepPurpleAF => Color(0XFF7B61FF);
 }

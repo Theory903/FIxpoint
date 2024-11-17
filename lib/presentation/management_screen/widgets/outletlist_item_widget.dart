@@ -1,7 +1,9 @@
 import 'package:fixpoint/core/app_export.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import '../../../widgets/custom_icon_button.dart';
 import '../models/outletlist_item_model.dart';
+import '../controllers/outlet_controller.dart';
 
 // ignore_for_file: must_be_immutable
 class OutletlistItemWidget extends StatelessWidget {
@@ -15,11 +17,16 @@ class OutletlistItemWidget extends StatelessWidget {
 
   VoidCallback? onTapColumnoutletone;
 
+  // Initialize Outlet Controller from GetX
+  final OutletController outletController = Get.put(OutletController());
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
         onTapColumnoutletone?.call();
+        // Trigger any action with GetX controller
+        outletController.selectOutlet(outletlistItemModelObj);
       },
       child: Container(
         width: double.maxFinite,
@@ -74,7 +81,7 @@ class OutletlistItemWidget extends StatelessWidget {
                                   text: TextSpan(
                                     children: [
                                       TextSpan(
-                                        text: "lbl_outlet".tr,
+                                        text: Trans("lbl_outlet").tr,
                                         style: CustomTextStyles
                                             .titleMediumInterOnErrorContainer,
                                       ),
@@ -82,12 +89,12 @@ class OutletlistItemWidget extends StatelessWidget {
                                         text: " ",
                                       ),
                                       TextSpan(
-                                        text: "lbl2".tr,
+                                        text: Trans("lbl2").tr,
                                         style: CustomTextStyles
                                             .titleSmallOnErrorContainer,
                                       ),
                                       TextSpan(
-                                        text: "lbl_1".tr,
+                                        text: Trans("lbl_1").tr,
                                         style: CustomTextStyles
                                             .titleMediumInterOnErrorContainer,
                                       )
@@ -96,14 +103,14 @@ class OutletlistItemWidget extends StatelessWidget {
                                   textAlign: TextAlign.left,
                                 ),
                                 Text(
-                                  outletlistItemModelObj.peopleCounter!,
+                                  outletlistItemModelObj.peopleCounter.value,
                                   style: CustomTextStyles.titleSmallGray70002,
                                 )
                               ],
                             ),
                           ),
                           CustomImageView(
-                            imagePath: outletlistItemModelObj.outletoneOne!,
+                            imagePath: outletlistItemModelObj.outletoneOne.value,
                             height: 24.h,
                             width: 24.h,
                           )
@@ -125,7 +132,7 @@ class OutletlistItemWidget extends StatelessWidget {
             ),
             SizedBox(height: 14.h),
             CustomImageView(
-              imagePath: outletlistItemModelObj.outletoneThree!,
+              imagePath: outletlistItemModelObj.outletoneThree.value,
               height: 44.h,
               width: 130.h,
             ),

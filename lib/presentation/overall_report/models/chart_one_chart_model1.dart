@@ -1,19 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 
-// ignore_for_file: must_be_immutable
 class ChartOneChartModel1 {
-  ChartOneChartModel1(
-      {this.barWidth = 2,
-      this.color,
-      this.gradient,
-      this.spots = const <FlSpot>[]});
+  final double barWidth;
+  final Color color;
+  final Gradient? gradient;
+  final List<FlSpot> spots;
 
-  double barWidth = 2;
-
-  Color? color;
-
-  Gradient? gradient;
-
-  List<FlSpot> spots;
+  ChartOneChartModel1({
+    required this.barWidth,
+    required this.color,
+    this.gradient,
+    required this.spots,
+  });
 }

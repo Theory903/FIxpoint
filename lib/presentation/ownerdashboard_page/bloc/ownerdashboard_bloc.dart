@@ -1,4 +1,5 @@
 import 'package:fixpoint/core/app_export.dart';
+import 'package:flutter/material.dart';
 import 'package:equatable/equatable.dart';
 import '../models/ownerdashboard_model.dart';
 import '../models/scrollview_tab_model.dart';
@@ -16,34 +17,7 @@ class OwnerdashboardBloc
   _onInitialize(
     OwnerdashboardInitialEvent event,
     Emitter<OwnerdashboardState> emit,
-  ) async {
-    emit(
-      state.copyWith(
-        scrollviewTabModelObj: state.scrollviewTabModelObj?.copyWith(
-          statisticslistItemList: fillStatisticslistItemList(),
-        ),
-      ),
-    );
-  }
-
-  List<StatisticslistItemModel> fillStatisticslistItemList() {
-    return [
-      StatisticslistItemModel(
-          image: ImageConstant.imgRectangle161,
-          sixtyfive: "+2.65%",
-          revenue: "Revenue"),
-      StatisticslistItemModel(
-          image: ImageConstant.imgRectangle162,
-          sixtyfive: "+2.65%",
-          revenue: "Task left"),
-      StatisticslistItemModel(
-          image: ImageConstant.imgRectangle163,
-          sixtyfive: "+2",
-          revenue: "Worker"),
-      StatisticslistItemModel(
-          image: ImageConstant.imgRectangle164,
-          sixtyfive: "+2.65%",
-          revenue: "Rating")
-    ];
+  ) {
+    // Add your initialization logic here
   }
 }
